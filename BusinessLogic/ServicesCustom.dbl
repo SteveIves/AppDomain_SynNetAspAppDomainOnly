@@ -1,0 +1,80 @@
+
+import System
+import System.Collections.Generic
+import Synergex.SynergyDE.Select
+
+namespace BusinessLogic
+	
+	;;; <summary>
+	;;; This class exposes hand-crafted methods to the client application.
+	;;; Notice that this is a PARTIAL class, so the methods are added to
+	;;; the main Services class defined in Services.dbl.
+	;;; </summary>
+	public partial class Services
+		
+		;;; <summary>
+		;;; Log a user in
+		;;; </summary>
+		public method Login, MethodStatus
+			required in userName, String
+			required in password, String
+			required out message, String
+			endparams
+		proc
+			data status, MethodStatus, MethodStatus.Success
+			message = ""
+			
+			if (userName!="user"||password!="password")
+			begin
+				message = "Invalid login!"
+				status = MethodStatus.Fail
+			end
+			mreturn status
+		endmethod
+		
+		;;; <summary>
+		;;; Get all Part records for a product group.
+		;;; </summary>
+		;;; <param name="aParts">Returned collection of Part objects (@List<Part>)</param>
+		;;; <returns></returns>
+		public method GetProductGroupParts, MethodStatus
+			required in  aGroupId, String 
+			required out aParts, @List<Part>
+			required out aErrorMessage, String
+			endparams
+		proc
+			
+			data status, MethodStatus, MethodStatus.Success
+			
+			aParts = new List<Part>()
+			
+			try
+			begin
+				data rec, strPart
+				foreach rec in new Select(new From("DAT:parts.ism",rec),(Where)rec.groupid.eq.aGroupId)
+					aParts.Add(new Part(rec))
+			end
+			catch (e, @FileNameException)
+			begin
+				status = MethodStatus.FatalError
+				aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+			end
+			catch (e, @NoFileFoundException)
+			begin
+				status = MethodStatus.FatalError
+				aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+			end
+			catch (e, @Exception)
+			begin
+				status = MethodStatus.FatalError
+				aErrorMessage = e.Message
+			end
+			endtry
+			
+			mreturn status
+			
+		endmethod
+		
+	endclass
+	
+endnamespace

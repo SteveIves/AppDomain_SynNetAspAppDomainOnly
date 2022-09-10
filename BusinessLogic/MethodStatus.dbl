@@ -1,0 +1,15 @@
+;;******************************************************************************
+;;WARNING: This file was created by CodeGen. Changes will be lost if regenerated
+;;******************************************************************************
+
+import System
+
+namespace BusinessLogic
+
+    public enum MethodStatus
+		    Success
+		    Fail
+		    FatalError
+    endenum
+	
+endnamespace

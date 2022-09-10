@@ -1,0 +1,97 @@
+;;******************************************************************************
+;;WARNING: This file was created by CodeGen. Changes will be lost if regenerated
+;;******************************************************************************
+
+import System
+
+namespace BusinessLogic
+
+    ;; Backing store for the public properties that expose the data
+    .include "PRODUCT_GROUP" repository, structure="strProductGroup", end
+
+    public class ProductGroup extends MarshalByRefObject
+
+.region "Backing storage for properties"
+
+        ;;Store a copy of the Synergy record
+        private mProductGroup, strProductGroup
+
+.endregion
+
+.region "Constructors"
+
+        ;;; <summary>
+        ;;; Construct an empty ProductGroup object
+        ;;; </summary>
+        public method ProductGroup
+            endparams
+        proc
+            init mProductGroup
+        endmethod
+
+        ;;; <summary>
+        ;;; Construct a ProductGroup object containing the data from a PRODUCT_GROUP record
+        ;;; </summary>
+        ;;; <param name="aProductGroup">Passed ProductGroup record (strProductGroup)</param>
+        internal method ProductGroup
+            required in aProductGroup, strProductGroup
+            endparams
+        proc
+            ;;Save the record
+            mProductGroup = aProductGroup
+        endmethod
+
+.endregion
+
+.region "Internal properties"
+
+        ;;; <summary>
+        ;;; Expose the full record (so it can be saved to a file, etc.)
+        ;;; Only visible within the Synergy .NET assembly because other languages don't understand Synergy types
+        ;;; </summary>
+        internal property Record, strProductGroup
+            method get
+            proc
+                mreturn mProductGroup
+            endmethod
+        endproperty
+
+.endregion
+
+.region "Public properties to expose individual fields"
+
+        ;;Expose the fields in the Synergy record as properties, using .NET types
+
+        ;;; <summary>
+        ;;; group id (GROUP_ID, A20)
+        ;;; </summary>
+        public property GroupId, String
+            method get
+            proc
+                mreturn %atrim(mProductGroup.group_id)
+            endmethod
+            method set
+            proc
+                mProductGroup.group_id = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; description (DESCRIPTION, A100)
+        ;;; </summary>
+        public property Description, String
+            method get
+            proc
+                mreturn %atrim(mProductGroup.description)
+            endmethod
+            method set
+            proc
+                mProductGroup.description = value
+            endmethod
+        endproperty
+
+.endregion
+
+    endclass
+
+endnamespace

@@ -1,0 +1,181 @@
+;;******************************************************************************
+;;WARNING: This file was created by CodeGen. Changes will be lost if regenerated
+;;******************************************************************************
+
+import System
+
+namespace BusinessLogic
+
+    ;; Backing store for the public properties that expose the data
+    .include "SUPPLIER" repository, structure="strSupplier", end
+
+    public class Supplier extends MarshalByRefObject
+
+.region "Backing storage for properties"
+
+        ;;Store a copy of the Synergy record
+        private mSupplier, strSupplier
+
+.endregion
+
+.region "Constructors"
+
+        ;;; <summary>
+        ;;; Construct an empty Supplier object
+        ;;; </summary>
+        public method Supplier
+            endparams
+        proc
+            init mSupplier
+        endmethod
+
+        ;;; <summary>
+        ;;; Construct a Supplier object containing the data from a SUPPLIER record
+        ;;; </summary>
+        ;;; <param name="aSupplier">Passed Supplier record (strSupplier)</param>
+        internal method Supplier
+            required in aSupplier, strSupplier
+            endparams
+        proc
+            ;;Save the record
+            mSupplier = aSupplier
+        endmethod
+
+.endregion
+
+.region "Internal properties"
+
+        ;;; <summary>
+        ;;; Expose the full record (so it can be saved to a file, etc.)
+        ;;; Only visible within the Synergy .NET assembly because other languages don't understand Synergy types
+        ;;; </summary>
+        internal property Record, strSupplier
+            method get
+            proc
+                mreturn mSupplier
+            endmethod
+        endproperty
+
+.endregion
+
+.region "Public properties to expose individual fields"
+
+        ;;Expose the fields in the Synergy record as properties, using .NET types
+
+        ;;; <summary>
+        ;;; supplier id (SUPPLIER_ID, A20)
+        ;;; </summary>
+        public property SupplierId, String
+            method get
+            proc
+                mreturn %atrim(mSupplier.supplier_id)
+            endmethod
+            method set
+            proc
+                mSupplier.supplier_id = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; supplier name (NAME, A50)
+        ;;; </summary>
+        public property Name, String
+            method get
+            proc
+                mreturn %atrim(mSupplier.name)
+            endmethod
+            method set
+            proc
+                mSupplier.name = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; addrss line 1 (ADDRESS_1, A50)
+        ;;; </summary>
+        public property Address1, String
+            method get
+            proc
+                mreturn %atrim(mSupplier.address_1)
+            endmethod
+            method set
+            proc
+                mSupplier.address_1 = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; address line 2 (ADDRESS_2, A50)
+        ;;; </summary>
+        public property Address2, String
+            method get
+            proc
+                mreturn %atrim(mSupplier.address_2)
+            endmethod
+            method set
+            proc
+                mSupplier.address_2 = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; address line 3 (ADDRESS_3, A50)
+        ;;; </summary>
+        public property Address3, String
+            method get
+            proc
+                mreturn %atrim(mSupplier.address_3)
+            endmethod
+            method set
+            proc
+                mSupplier.address_3 = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; city (CITY, A30)
+        ;;; </summary>
+        public property City, String
+            method get
+            proc
+                mreturn %atrim(mSupplier.city)
+            endmethod
+            method set
+            proc
+                mSupplier.city = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; post code (POSTAL_CODE, A10)
+        ;;; </summary>
+        public property PostalCode, String
+            method get
+            proc
+                mreturn %atrim(mSupplier.postal_code)
+            endmethod
+            method set
+            proc
+                mSupplier.postal_code = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; web address (WEB_ADDRESS, A78)
+        ;;; </summary>
+        public property WebAddress, String
+            method get
+            proc
+                mreturn %atrim(mSupplier.web_address)
+            endmethod
+            method set
+            proc
+                mSupplier.web_address = value
+            endmethod
+        endproperty
+
+.endregion
+
+    endclass
+
+endnamespace

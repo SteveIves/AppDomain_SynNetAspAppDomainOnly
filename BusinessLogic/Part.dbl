@@ -1,0 +1,181 @@
+;;******************************************************************************
+;;WARNING: This file was created by CodeGen. Changes will be lost if regenerated
+;;******************************************************************************
+
+import System
+
+namespace BusinessLogic
+
+    ;; Backing store for the public properties that expose the data
+    .include "PART" repository, structure="strPart", end
+
+    public class Part extends MarshalByRefObject
+
+.region "Backing storage for properties"
+
+        ;;Store a copy of the Synergy record
+        private mPart, strPart
+
+.endregion
+
+.region "Constructors"
+
+        ;;; <summary>
+        ;;; Construct an empty Part object
+        ;;; </summary>
+        public method Part
+            endparams
+        proc
+            init mPart
+        endmethod
+
+        ;;; <summary>
+        ;;; Construct a Part object containing the data from a PART record
+        ;;; </summary>
+        ;;; <param name="aPart">Passed Part record (strPart)</param>
+        internal method Part
+            required in aPart, strPart
+            endparams
+        proc
+            ;;Save the record
+            mPart = aPart
+        endmethod
+
+.endregion
+
+.region "Internal properties"
+
+        ;;; <summary>
+        ;;; Expose the full record (so it can be saved to a file, etc.)
+        ;;; Only visible within the Synergy .NET assembly because other languages don't understand Synergy types
+        ;;; </summary>
+        internal property Record, strPart
+            method get
+            proc
+                mreturn mPart
+            endmethod
+        endproperty
+
+.endregion
+
+.region "Public properties to expose individual fields"
+
+        ;;Expose the fields in the Synergy record as properties, using .NET types
+
+        ;;; <summary>
+        ;;; part ID (ID, A20)
+        ;;; </summary>
+        public property Id, String
+            method get
+            proc
+                mreturn %atrim(mPart.id)
+            endmethod
+            method set
+            proc
+                mPart.id = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Group ID (GROUPID, A20)
+        ;;; </summary>
+        public property Groupid, String
+            method get
+            proc
+                mreturn %atrim(mPart.groupid)
+            endmethod
+            method set
+            proc
+                mPart.groupid = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; supplier id (SUPPLIERID, A20)
+        ;;; </summary>
+        public property Supplierid, String
+            method get
+            proc
+                mreturn %atrim(mPart.supplierid)
+            endmethod
+            method set
+            proc
+                mPart.supplierid = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Description (DESCRIPTION, A50)
+        ;;; </summary>
+        public property Description, String
+            method get
+            proc
+                mreturn %atrim(mPart.description)
+            endmethod
+            method set
+            proc
+                mPart.description = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; Technical info (TECHNICAL_INFO, A500)
+        ;;; </summary>
+        public property TechnicalInfo, String
+            method get
+            proc
+                mreturn %atrim(mPart.technical_info)
+            endmethod
+            method set
+            proc
+                mPart.technical_info = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; quantity in stock (QUANTITY, I4)
+        ;;; </summary>
+        public property Quantity, int
+            method get
+            proc
+                mreturn mPart.quantity
+            endmethod
+            method set
+            proc
+                mPart.quantity = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; cost price (COST_PRICE, D10.2)
+        ;;; </summary>
+        public property CostPrice, decimal
+            method get
+            proc
+                mreturn mPart.cost_price
+            endmethod
+            method set
+            proc
+                mPart.cost_price = value
+            endmethod
+        endproperty
+
+        ;;; <summary>
+        ;;; (SPARE, A76)
+        ;;; </summary>
+        public property Spare, String
+            method get
+            proc
+                mreturn %atrim(mPart.spare)
+            endmethod
+            method set
+            proc
+                mPart.spare = value
+            endmethod
+        endproperty
+
+.endregion
+
+    endclass
+
+endnamespace

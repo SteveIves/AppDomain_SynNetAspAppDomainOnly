@@ -1,0 +1,377 @@
+;;******************************************************************************
+;;WARNING: This file was created by CodeGen. Changes will be lost if regenerated
+;;******************************************************************************
+
+import System.Collections.Generic
+import Synergex.SynergyDE.Select
+
+namespace BusinessLogic
+
+    ;;; <summary>
+    ;;; This class exposes the CRUD methods for ProductGroup
+    ;;; to the client application. Notice that this is a PARTIAL class, so the
+    ;;; methods are added to the main Services class defined in Services.dbl.
+    ;;; </summary>
+    public partial class Services
+
+        ;;; <summary>
+        ;;; Create a ProductGroup record
+        ;;; </summary>
+        ;;; <param name="aProductGroup">Passed ProductGroup object (@ProductGroup)</param>
+        ;;; <returns></returns>
+        public method CreateProductGroup, MethodStatus
+            required in aProductGroup, @ProductGroup
+            required out aErrorMessage, String
+            endparams
+            stack record
+                ch, int
+                rec, strProductGroup
+                status, MethodStatus
+            endrecord
+        proc
+            status = MethodStatus.Success
+            aErrorMessage = ""
+
+            try
+            begin
+                open(ch=0,u:i,"DAT:groups.ism")
+                store(ch,aProductGroup.Record)
+            end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @DuplicateException)
+            begin
+                status = MethodStatus.Fail
+                aErrorMessage = "Record already exists!"
+            end
+            catch (e, @Exception)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = e.Message
+            end
+            finally
+            begin
+                if (ch&&chopen(ch))
+                    close ch
+            end
+            endtry
+
+            mreturn status
+
+        endmethod
+
+        ;;; <summary>
+        ;;; Real all ProductGroup records
+        ;;; </summary>
+        ;;; <param name="aProductGroups">Returned collection of ProductGroup objects (@List<ProductGroup>)</param>
+        ;;; <returns></returns>
+        public method ReadAllProductGroups, MethodStatus
+            required out aProductGroups, @List<ProductGroup>
+            required out aErrorMessage, String
+            endparams
+        proc
+
+            data status, MethodStatus, MethodStatus.Success
+            aErrorMessage = ""
+
+            aProductGroups = new List<ProductGroup>()
+
+            try
+            begin
+                data rec, strProductGroup
+                foreach rec in new Select(new From("DAT:groups.ism",rec))
+                    aProductGroups.Add(new ProductGroup(rec))
+            end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @Exception)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = e.Message
+            end
+            endtry
+
+            mreturn status
+
+        endmethod
+
+        ;;; <summary>
+        ;;; Read a ProductGroup record by primary key (GROUP_ID: primary access key)
+        ;;; </summary>
+        ;;; <param name="aGroupId">Passed group id (String)</param>
+        ;;; <param name="aProductGroup">Returned ProductGroup object (@ProductGroup)</param>
+        ;;; <param name="aGrfa">Returned GRFA (string)</param>
+        ;;; <returns></returns>
+        public method ReadProductGroup, MethodStatus
+            required in  aGroupId, String
+            required out aProductGroup, @ProductGroup
+            required out aGrfa, String
+            required out aErrorMessage, String
+            endparams
+            stack record
+                ch, int
+                rec, strProductGroup
+                status, MethodStatus
+                grfa, a10
+            endrecord
+        proc
+            status = MethodStatus.Success
+            aErrorMessage = ""
+
+            init rec
+            rec.group_id = aGroupId
+
+            try
+            begin
+                open(ch=0,I:I,"DAT:groups.ism")
+                read(ch,rec,%keyval(ch,rec,0),GETRFA:grfa)
+                aProductGroup = new ProductGroup(rec)
+                aGrfa = grfa
+            end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @EndOfFileException)
+            begin
+                status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
+            end
+            catch (e, @KeyNotSameException)
+            begin
+                status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
+            end
+            catch (e, @Exception)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = e.Message
+            end
+            finally
+            begin
+                if (ch&&chopen(ch))
+                    close ch
+            end
+            endtry
+
+            mreturn status
+
+        endmethod
+
+        ;;; <summary>
+        ;;; Update a ProductGroup record
+        ;;; </summary>
+        ;;; <param name="aProductGroup">Passed/returned ProductGroup object (@ProductGroup)</param>
+        ;;; <param name="aGrfa">Passed/returned GRFA</param>
+        ;;; <returns></returns>
+        public method UpdateProductGroup, MethodStatus
+            required inout aProductGroup, @ProductGroup
+            required inout aGrfa, String
+            required out aErrorMessage, String
+            endparams
+            stack record
+                ch, int
+                rec, strProductGroup
+                status, MethodStatus
+                grfa, a10
+            endrecord
+        proc
+            status = MethodStatus.Success
+            aErrorMessage = ""
+
+            try
+            begin
+                open(ch=0,u:i,"DAT:groups.ism")
+                ;;Attempt to read the original record by GRFA to make sure that
+                ;;nobody else has modified or deleted it
+                grfa=aGrfa
+                read(ch,rec,RFA:grfa,GETRFA:grfa)
+                write(ch,aProductGroup.Record)
+            end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (ex, @RecordNotSameException)
+            begin
+                ;;Failed to lock the original record, it must have been changed
+                ;;by another process since this user obtained it. We'll return
+                ;;the new record and it's GRFA to the user
+                aProductGroup = new ProductGroup(rec)
+                aGrfa = grfa
+                status = MethodStatus.Fail
+                aErrorMessage = "The record was changed by another user!"
+            end
+            catch (e, @DuplicateException)
+            begin
+                status = MethodStatus.Fail
+                aErrorMessage = "Duplicate key!"
+            end
+            catch (e, @Exception)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = e.Message
+            end
+            finally
+            begin
+                if (ch&&chopen(ch))
+                    close ch
+            end
+            endtry
+
+            mreturn status
+
+        endmethod
+
+        ;;; <summary>
+        ;;; Delete a ProductGroup record
+        ;;; </summary>
+        ;;; <param name="aGrfa">Passed GRFA (string)</param>
+        ;;; <returns></returns>
+        public method DeleteProductGroup, MethodStatus
+            required in aGrfa, String
+            required out aErrorMessage, String
+            endparams
+            stack record
+                ch, int
+                rec, strProductGroup
+                status, MethodStatus
+                grfa, a10
+            endrecord
+        proc
+            status = MethodStatus.Success
+            aErrorMessage = ""
+
+            try
+            begin
+                open(ch=0,u:i,"DAT:groups.ism")
+                ;;Attempt to read the original record by GRFA to make sure that
+                ;;nobody else has modified or deleted it
+                grfa=aGrfa
+                read(ch,rec,RFA:grfa)
+                delete(ch)
+            end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (ex, @RecordNotSameException)
+            begin
+                status = MethodStatus.Fail
+                aErrorMessage = "The record was changed by another user!"
+            end
+            catch (e, @Exception)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = e.Message
+            end
+            finally
+            begin
+                if (ch&&chopen(ch))
+                    close ch
+            end
+            endtry
+
+            mreturn status
+
+        endmethod
+
+        ;;; <summary>
+        ;;; Determine if a ProductGroup record exists
+        ;;; </summary>
+        ;;; <param name="aGroupId">Passed group id (string)</param>
+        ;;; <returns></returns>
+        public method ProductGroupExists, MethodStatus
+            required in  aGroupId, string
+            required out aErrorMessage, String
+            endparams
+            stack record
+                ch, int
+                rec, strProductGroup
+                status, MethodStatus
+            endrecord
+        proc
+            status = MethodStatus.Success
+            aErrorMessage = ""
+
+            init rec
+            rec.group_id = aGroupId
+
+            try
+            begin
+                open(ch=0,I:I,"DAT:groups.ism")
+                find(ch,,%keyval(ch,rec,0))
+            end
+            catch (e, @FileNameException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @NoFileFoundException)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = "File not found! CHECK THE DAT SETTING IN THE WEB.CONFIG FILE AND MAKE SURE IT IS CORRECT FOR YOUR SYSTEM!"
+            end
+            catch (e, @EndOfFileException)
+            begin
+                status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
+            end
+            catch (e, @KeyNotSameException)
+            begin
+                status = MethodStatus.Fail
+                aErrorMessage = "Record not found!"
+            end
+            catch (e, @Exception)
+            begin
+                status = MethodStatus.FatalError
+                aErrorMessage = e.Message
+            end
+            finally
+            begin
+                if (ch&&chopen(ch))
+                    close ch
+            end
+            endtry
+
+            mreturn status
+
+        endmethod
+
+    endclass
+
+endnamespace
